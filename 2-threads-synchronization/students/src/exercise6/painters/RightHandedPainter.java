@@ -21,6 +21,7 @@ public class RightHandedPainter extends Painter {
                     Thread.sleep(100);
 
                     System.out.printf("Right hand painter painting with %s and %s\n", takenPaint, takenBrush);
+                    paint.notify();
                 }
             }
         } catch (InterruptedException e) {

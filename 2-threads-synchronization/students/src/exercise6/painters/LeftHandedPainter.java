@@ -13,6 +13,7 @@ public class LeftHandedPainter extends Painter {
     public void run() {
         try {
             synchronized (paint) {
+                paint.wait();
                 String takenPaint = paint.takePaint();
                 Thread.sleep(100);
 
