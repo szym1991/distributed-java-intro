@@ -1,5 +1,7 @@
 package pl.edu.amu.dji.jms.lab1;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.activemq.ActiveMQConnectionFactory;
 
 import javax.jms.*;
@@ -22,29 +24,31 @@ public class HelloMain {
         - topic name should be "SayHelloTopic"
          */
 
-        Connection connection = null;
-        Session session = null;
-        Destination queue = null;
-        MessageConsumer consumer = null;
+        Connection connection = connectionFactory.createConnection();
+        Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+        Destination queue = session.createQueue("SayHellloQueue");
+        //Destination topic = session.createTopic("SayHellloQueue");
+        //MessageConsumer consumer = session.createConsumer(queue);
+        MessageConsumer consumer = session.createConsumer(queue, "dots = true");
 
-        /*
-        Create MessageConsumer instance from session (check Session class and createConsumer method)
 
-        Implement onMessage in MessageListener interface
-        - check if message is in proper type (see message type in Say class) by instanceof
-        - get text from message (remember to cast message to proper type)
-        - print message text to sysout
-        - don't forget to handle JMSException
-         */
-        MessageListener helloListener = new MessageListener() {
-            @Override
+        MessageListener helloListener;
+        helloListener = new MessageListener() {
             public void onMessage(Message message) {
-                throw new UnsupportedOperationException();
+                if (message instanceof TextMessage) {
+                    TextMessage textMessage = (TextMessage) message;
+                    try {
+                        System.out.println(textMessage.getBooleanProperty("dots"));
+                        System.out.println(textMessage.getText());
+                    } catch (JMSException ex) {
+                        Logger.getLogger(HelloMain.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
             }
         };
 
         //Set MessageListener implementation as a message listener in MessageConsumer
-
+        consumer.setMessageListener(helloListener);
         connection.start();
     }
 }
