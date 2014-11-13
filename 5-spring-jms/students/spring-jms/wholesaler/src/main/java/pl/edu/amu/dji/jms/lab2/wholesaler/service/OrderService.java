@@ -1,26 +1,15 @@
 package pl.edu.amu.dji.jms.lab2.wholesaler.service;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.jms.JMSException;
-import javax.jms.MapMessage;
-import javax.jms.Message;
-import javax.jms.MessageListener;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import pl.edu.amu.dji.jms.lab2.wholesaler.service.message.Order;
 
-public class OrderService implements MessageListener {
+@Service("orderService")
+public class OrderService {
 
-    @Override
-    public void onMessage(Message message) {
-        MapMessage msg = (MapMessage) message;
-        String retailerID;
-        Double quantity;
-        try {
-            retailerID = msg.getString("retailerID");
-            System.out.println("RetailerID: " + retailerID);
-            quantity = msg.getDouble("quantity");
-            System.out.println("Quantity: " + quantity);
-        } catch (JMSException ex) {
-            Logger.getLogger(OrderService.class.getName()).log(Level.SEVERE, null, ex);
-        }
+    @Transactional
+    public void order(Order order) {
+        System.out.println("RetailerID: " + order.getRetailerID());
+        System.out.println("Quantity: " + order.getQuantity());
     }
 }

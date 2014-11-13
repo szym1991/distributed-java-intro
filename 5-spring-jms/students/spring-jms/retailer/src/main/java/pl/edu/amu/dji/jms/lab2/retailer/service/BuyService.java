@@ -35,7 +35,7 @@ public class BuyService implements MessageListener {
                     public Message createMessage(Session sn) throws JMSException {
                         MapMessage msg = sn.createMapMessage();
                         msg.setString("retailerID", getClass().getName());
-                        msg.setDouble("quantity", 123.22);
+                        msg.setInt("quantity", 123);
                         return msg;
                     }
                 };
