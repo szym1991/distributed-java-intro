@@ -7,38 +7,28 @@ import javax.jms.JMSException;
 import javax.jms.MapMessage;
 import javax.jms.Message;
 import javax.jms.Session;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jms.core.MessageCreator;
 import org.springframework.jms.support.converter.SimpleMessageConverter;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import pl.edu.amu.dji.jms.lab2.wholesaler.service.message.Offer;
 
+@Service("offerService")
 public class OfferService {
 
+    @Autowired
+    @Qualifier("offerJmsTemplate")
     private JmsTemplate jmsTemplate;
 
-    private Destination offerTopic;
-
+    @Autowired
+    @Qualifier("orderQueue")
     private Destination orderQueue;
 
-    public void setJmsTemplate(JmsTemplate jmsTemplate) {
-        this.jmsTemplate = jmsTemplate;
-    }
-
-    public void setOfferTopic(Destination offerTopic) {
-        this.offerTopic = offerTopic;
-    }
-
-    public void setOrderQueue(Destination orderQueue) {
-        this.orderQueue = orderQueue;
-    }
-
+    @Transactional
     public void sendOffer(final Double price) {
-        MessageCreator messageCreator = new MessageCreator() {
-            public Message createMessage(Session sn) throws JMSException {
-                MapMessage msg = sn.createMapMessage();
-                msg.setDouble("price", price);
-                msg.setJMSReplyTo(orderQueue);
-                return msg;
-            }
-        };
-        jmsTemplate.send(offerTopic, messageCreator);
+        Offer offer = new Offer(price, orderQueue);
+        jmsTemplate.convertAndSend(offer);
     }
 }
