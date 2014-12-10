@@ -1,3 +1,4 @@
 target
 .idea
 *.iml
+/projects/1-threads/students/src/main/java/project1/CharityFleaMarket/nbproject/private/
